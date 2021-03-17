@@ -1,16 +1,33 @@
-# This is a sample Python script.
+import sgp4
+from get_tle import *
+import math
+import numpy as np
+import datetime as dt
+import matplotlib.pyplot as plt
+from pyorbital.orbital import Orbital
+import spacetrack
+from get_diap import *
+from next_time import *
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+TLE_FILE = "https://celestrak.com/NORAD/elements/active.txt"  # DB file to download
+SAT_NAME = "NOAA 19                 "
+# LK coords
+LATITUDE = 55.93013
+LONGITUDE = 37.51832
+pi = math.atan(1) * 4
 
+tle = from_strings(TLE_FILE, SAT_NAME)
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+diap = get_diap()
 
+beg = diap[0]
+end = diap[1]
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+cur_time = beg.copy()
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+while cur_time != end:
+    cur_time_dt = dt.datetime(*cur_time)
+    orb = Orbital("N", line1=tle[1], line2=tle[2])
+    lon, lat, alt = orb.get_lonlatalt(cur_time_dt)
+    print('lat =', lat, 'lon =', lon)
+    cur_time = next_time(cur_time)
