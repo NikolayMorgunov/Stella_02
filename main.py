@@ -37,6 +37,10 @@ dekart_coords_x = []
 dekart_coords_y = []
 dekart_coords_z = []
 
+all_thetas = []
+all_phis = []
+all_times = []
+
 while cur_time != end:
     cur_time_dt = dt.datetime(*cur_time)
     orb = Orbital("N", line1=tle[1], line2=tle[2])
@@ -58,7 +62,7 @@ while cur_time != end:
     theta = math.asin(dist_to_fl / dist_to_sat)
     theta = to_deg(theta)
     phi = 0
-    if theta >= 10:
+    if theta >= 0:
         xn, yn, zn = north(x0, y0, z0)
         vec_nor = [xn - x0, yn - y0, zn - z0]
         len_nor = (vec_nor[0] ** 2 + vec_nor[1] ** 2 + vec_nor[2] ** 2) ** 0.5
@@ -69,19 +73,64 @@ while cur_time != end:
         phi = to_deg(phi)
 
         xe, ye, ze = east(x0, y0, z0)
-        vec_est = [xe - x0, ye - y0, ze - z0]
+        x1 = vec_nor[0]
+        y1 = vec_nor[1]
+        z1 = vec_nor[2]
+        vec_est = [y1 * z0 - z1 * y0,
+                   -(x1 * z0 - x0 * z1),
+                   x1 * y0 - y1 * x0]
         len_est = (vec_est[0] ** 2 + vec_est[1] ** 2 + vec_est[2] ** 2) ** 0.5
-        phi1 = math.acos((vec_est[0] * vec_pr[0] + vec_est[1] * vec_pr[1] + vec_est[2] * vec_pr[2]) / (len_est * len_pr))
-        pli1 = to_deg(phi1)
+        phi1 = math.acos(
+            (vec_est[0] * vec_pr[0] + vec_est[1] * vec_pr[1] + vec_est[2] * vec_pr[2]) / (len_est * len_pr))
+        phi1 = to_deg(phi1)
 
-        if (phi1 > 90):
-           phi = -phi + 360
+        if phi1 > 90:
+            phi = -phi + 360
 
-    print('theta =', theta, 'phi =', phi)
+    # print('theta =', theta, 'phi =', phi)
+    all_thetas.append(theta)
+    all_phis.append(phi)
+    all_times.append(cur_time.copy())
+
+events_thetas = []
+events_phis = []
+events_times = []
+
+cur_event_thetas = []
+cur_event_phis = []
+cur_event_times = []
+for i in range(len(all_thetas)):
+    if all_thetas[i] >= 0:
+        cur_event_thetas.append(all_thetas[i])
+        cur_event_phis.append(to_rad(all_phis[i]))
+        cur_event_times.append(all_times[i].copy())
+    else:
+        if cur_event_thetas:
+            events_thetas.append(cur_event_thetas)
+            events_phis.append(cur_event_phis)
+            events_times.append(cur_event_times)
+        cur_event_thetas = []
+        cur_event_phis = []
+        cur_event_times = []
+
+for i in range(len(events_times)):
+    print(events_times[i][0][0], events_times[i][0][1], events_times[i][0][2], sep='.', end=' ')
+    print(events_times[i][0][3], events_times[i][0][4], sep=':', end=' ')
+    print('Азимут:', to_deg(events_phis[i][0]), 'градусов')
 
 fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-ax.plot(dekart_coords_x, dekart_coords_y, dekart_coords_z)
-ax.scatter(x0, y0, z0, color='red')
+sf = fig.add_subplot(111, projection='3d')
+sf.plot(dekart_coords_x, dekart_coords_y, dekart_coords_z)
+sf.scatter(x0, y0, z0, color='red')
+fig.set_size_inches(7, 7)
+plt.show()
+
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='polar')
+ax.set_theta_zero_location('N')
+ax.set_theta_direction(-1)
+ax.set_rlim(bottom=90, top=0)
+for phi, theta in zip(events_phis, events_thetas):
+    ax.plot(phi, theta)
 fig.set_size_inches(7, 7)
 plt.show()
