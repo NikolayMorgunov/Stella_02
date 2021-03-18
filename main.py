@@ -123,7 +123,6 @@ ax = sf.add_subplot(111, projection='3d')
 ax.plot(dekart_coords_x, dekart_coords_y, dekart_coords_z)
 ax.scatter(x0, y0, z0, color='red')
 sf.set_size_inches(7, 7)
-plt.show()
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='polar')
