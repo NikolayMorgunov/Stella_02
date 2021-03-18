@@ -116,13 +116,13 @@ for i in range(len(all_thetas)):
 for i in range(len(events_times)):
     print(events_times[i][0][0], events_times[i][0][1], events_times[i][0][2], sep='.', end=' ')
     print(events_times[i][0][3], events_times[i][0][4], sep=':', end=' ')
-    print('Азимут:', to_deg(events_phis[i][0]), 'градусов')
+    print('Азимут:', str(to_deg(events_phis[i][0]))[:-12], 'градусов')
 
-fig = plt.figure()
-sf = fig.add_subplot(111, projection='3d')
-sf.plot(dekart_coords_x, dekart_coords_y, dekart_coords_z)
-sf.scatter(x0, y0, z0, color='red')
-fig.set_size_inches(7, 7)
+sf = plt.figure()
+ax = sf.add_subplot(111, projection='3d')
+ax.plot(dekart_coords_x, dekart_coords_y, dekart_coords_z)
+ax.scatter(x0, y0, z0, color='red')
+sf.set_size_inches(7, 7)
 plt.show()
 
 fig = plt.figure()
