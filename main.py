@@ -29,8 +29,8 @@ tle = from_strings(TLE_FILE, SAT_NAME)
 
 diap = get_diap()
 
-beg = diap[0]
-end = diap[1]
+beg = to_utc(diap[0])
+end = to_utc(diap[1])
 
 cur_time = beg.copy()
 dekart_coords_x = []
@@ -54,7 +54,7 @@ while cur_time != end:
     dekart_coords_x.append(x)
     dekart_coords_y.append(y)
     dekart_coords_z.append(z)
-    cur_time = next_time(cur_time)
+
 
     dist_to_fl = rho(x0, y0, z0, x, y, z)
 
@@ -90,7 +90,8 @@ while cur_time != end:
     # print('theta =', theta, 'phi =', phi)
     all_thetas.append(theta)
     all_phis.append(phi)
-    all_times.append(cur_time.copy())
+    all_times.append(to_msk(cur_time.copy()).copy())
+    cur_time = next_time(cur_time)
 
 events_thetas = []
 events_phis = []
