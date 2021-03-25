@@ -15,6 +15,7 @@ def next_time(time):
         time[0] += 1
     return time
 
+
 def to_utc(time):
     days_in_months = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
     time[3] -= 3
@@ -28,6 +29,7 @@ def to_utc(time):
             time[1] = 12
         time[2] = days_in_months[time[1] - 1]
     return time
+
 
 def to_msk(time):
     days_in_months = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]

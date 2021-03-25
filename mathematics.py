@@ -22,11 +22,10 @@ def rho(a, b, c, a1, b1, c1):
 
 
 def proekt(x0, y0, z0, xc, yc, zc):
-    d = -x0 ** 2 - y0 ** 2 - z0 ** 2
-    t = -(x0 * xc + y0 * yc + z0 * zc + d) / (x0 + y0 + z0)
-    xp = xc + t
-    yp = yc + t
-    zp = zc + t
+    t = (x0 ** 2 - x0 * xc + y0 ** 2 - y0 * yc + z0 ** 2 - z0 * zc) / (x0 ** 2 + y0 ** 2 + z0 ** 2)
+    xp = xc + t * x0
+    yp = yc + t * y0
+    zp = zc + t * z0
     return xp, yp, zp
 
 
