@@ -18,12 +18,12 @@ LONGITUDE = 37.51832
 H = 0.2
 Re = 6378.137
 pi = math.atan(1) * 4
-a0 = to_rad(LATITUDE)
-b0 = to_rad(LONGITUDE)
+lat = to_rad(LATITUDE)
+lon = to_rad(LONGITUDE)
 r0 = Re + H
-x0 = r0 * math.sin(a0) * math.cos(b0)
-y0 = r0 * math.sin(a0) * math.sin(b0)
-z0 = r0 * math.cos(a0)
+x0 = r0 * math.cos(lat) * math.cos(lon)
+y0 = r0 * math.sin(lon) * math.cos(lat)
+z0 = r0 * math.sin(lat)
 
 tle = from_strings(TLE_FILE, SAT_NAME)
 
@@ -45,12 +45,12 @@ while cur_time != end:
     cur_time_dt = dt.datetime(*cur_time)
     orb = Orbital("N", line1=tle[1], line2=tle[2])
     lon, lat, alt = orb.get_lonlatalt(cur_time_dt)
-    a = to_rad(lon)
-    b = to_rad(lat)
+    lon = to_rad(lon)
+    lat = to_rad(lat)
     r = alt + Re
-    x = r * math.sin(a) * math.cos(b)
-    y = r * math.sin(a) * math.sin(b)
-    z = r * math.cos(a)
+    x = r * math.cos(lat) * math.cos(lon)
+    y = r * math.sin(lon) * math.cos(lat)
+    z = r * math.sin(lat)
     dekart_coords_x.append(x)
     dekart_coords_y.append(y)
     dekart_coords_z.append(z)
@@ -117,7 +117,8 @@ for i in range(len(all_thetas)):
 for i in range(len(events_times)):
     print(events_times[i][0][0], events_times[i][0][1], events_times[i][0][2], sep='.', end=' ')
     print(events_times[i][0][3], events_times[i][0][4], sep=':', end=' ')
-    print('Азимут:', str(to_deg(events_phis[i][0]))[:-12], 'градусов')
+    print('Азимут:', str(to_deg(events_phis[i][0]))[:-12], 'градусов.', end=' ')
+    print('Максимальная элевация', str(max(events_thetas[i]))[:-12], 'градусов.')
 
 sf = plt.figure()
 ax = sf.add_subplot(111, projection='3d')
